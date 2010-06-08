@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+
 if ! test -f go-pylons.py
 then
 	if ! test -x `which wget`
@@ -48,3 +48,16 @@ if ! test -d "phyloplumber"
 then
 	git clone git://github.com/mtholder/phyloplumber.git
 fi
+
+
+echo "Creating phyloplumber_env.sh bash script"
+echo '#!/bin/sh' > phyloplumber_env.sh
+echo 'export PHYLOPLUMBER_PARENT='`pwd` >> phyloplumber_env.sh
+echo 'export PHYLOPLUMBER_ROOT=${PHYLOPLUMBER_PARENT}/phylopylons' >> phyloplumber_env.sh
+echo 'source ${PHYLOPLUMBER_PARENT}/mydevenv/bin/activate' >> phyloplumber_env.sh
+
+
+echo "phyloplumber_env.sh has been written. Whenever you want to work on phyloplumber"
+echo "    from the command line, then (from a bash shell) source this file to "
+echo "    configure your environment"
+
