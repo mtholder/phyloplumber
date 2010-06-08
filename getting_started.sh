@@ -11,7 +11,7 @@ then
 		echo "    and then place the downloaded script in this directory"
 		exit 1
 	else
-		wget http://pylonshq.com/download/1.0/go-pylons.py
+		wget http://pylonshq.com/download/1.0/go-pylons.py || exit 1
 	fi
 fi
 
@@ -29,7 +29,7 @@ then
 	echo "    successfully. If you want the getting_started.sh script to reinstall"
 	echo "    pylons then remove that file."
 else
-	python go-pylons.py --no-site-packages mydevenv
+	python go-pylons.py --no-site-packages mydevenv || exit 1
 fi
 
 
@@ -46,7 +46,7 @@ fi
 
 if ! test -d "phyloplumber"
 then
-	git clone git://github.com/mtholder/phyloplumber.git
+	git clone git://github.com/mtholder/phyloplumber.git  || exit 1
 fi
 
 
@@ -62,5 +62,16 @@ echo "    from the command line, then (from a bash shell) source this file to "
 echo "    configure your environment"
 
 
-source phyloplumber_env.sh
+
+source phyloplumber_env.sh  || exit 1
+
 easy_install sphinx
+
+if ! test -d dendropy
+then
+	git clone git://github.com/jeetsukumaran/DendroPy.git || exit 1
+fi
+cd dendropy || exit 1
+python setup.py develop || exit 1
+cd ..
+
