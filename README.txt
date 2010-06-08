@@ -8,9 +8,9 @@ The goal of the project is to enable complex pipelines of phylogenetic analyses
 		4. share a project between collaborators,
 		5. provide a browser-based views on project and its history
 
-################################################################################
+
 Getting Started
-################################################################################
+===============
 Prerequisites (you should be prompted for these as you run the 
 	getting_started.sh script, but in case you want to know what they are from
 	the start:
@@ -18,6 +18,9 @@ Prerequisites (you should be prompted for these as you run the
 	1. python (version greater than or equal to 2.4 but less than 3.0)
 	2. git 
 
+
+Installing Prerequisites
+========================
 phyloplumber is built on the Pylons webframework (http://pylonshq.com). If you
 	have not installed the tools yet, then you can use the getting_started.sh
 	script to get up and running quickly. Just create a directory to work in, 
@@ -28,4 +31,22 @@ phyloplumber is built on the Pylons webframework (http://pylonshq.com). If you
 	$ wget http://github.com/mtholder/phyloplumber/raw/master/getting_started.sh
 	$ sh getting_started.sh
 	
+	
+Installation and Setup
+======================
+
+Install ``phyloplumber`` using easy_install::
+
+    easy_install phyloplumber
+
+Make a config file as follows::
+
+    paster make-config phyloplumber config.ini
+
+Tweak the config file as appropriate and then setup the application::
+
+    paster setup-app config.ini
+
+Then you are ready to go.
+
 		

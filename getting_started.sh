@@ -61,3 +61,6 @@ echo "phyloplumber_env.sh has been written. Whenever you want to work on phylopl
 echo "    from the command line, then (from a bash shell) source this file to "
 echo "    configure your environment"
 
+
+source phyloplumber_env.sh
+easy_install sphinx
