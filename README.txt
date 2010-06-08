@@ -25,7 +25,7 @@ phyloplumber is built on the Pylons webframework (http://pylonshq.com). If you
 	
 	$ mkdir webservices
 	$ cd webservices
-	$ wget http://github.com/mtholder/phyloplumber/blob/master/getting_started.sh
-	$ getting_started.sh
+	$ wget http://github.com/mtholder/phyloplumber/raw/master/getting_started.sh
+	$ sh getting_started.sh
 	
 		
