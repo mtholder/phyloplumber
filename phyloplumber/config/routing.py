@@ -9,9 +9,10 @@ from routes import Mapper
 def make_map(config):
     """Create, configure and return the routes Mapper"""
     map = Mapper(directory=config['pylons.paths']['controllers'],
-                 always_scan=config['debug'])
+                 always_scan=config['debug'],
+                 explicit=True
+                 )
     map.minimization = False
-    map.explicit = False
 
     # The ErrorController route (handles 404/500 error pages); it should
     # likely stay at the top, ensuring it can always be resolved
