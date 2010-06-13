@@ -30,7 +30,11 @@ def load_environment(global_conf, app_conf):
     config['routes.map'] = make_map(config)
     config['pylons.app_globals'] = app_globals.Globals(config)
     config['pylons.h'] = phyloplumber.lib.helpers
-    
+
+    # CONFIGURATION OPTIONS HERE (note: all config options will override
+    # any Pylons config options)
+    config['pylons.strict_c'] = True
+
     # Setup cache object as early as possible
     import pylons
     pylons.cache._push_object(config['pylons.app_globals'].cache)
