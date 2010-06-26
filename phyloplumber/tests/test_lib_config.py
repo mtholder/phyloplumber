@@ -16,13 +16,10 @@ from routes.util import URLGenerator
 from webtest import TestApp
 import pylons.test
 
-from phyloplumber.lib import get_top_internal_dir, get_top_external_dir
+from phyloplumber.lib.base import get_top_internal_dir, get_top_external_dir
 
 
 __all__ = ['environ', 'url', 'TestController']
-
-# Invoke websetup with the current config file
-SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
 
 environ = {}
 

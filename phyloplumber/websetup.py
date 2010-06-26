@@ -1,7 +1,10 @@
 """Setup the phyloplumber application"""
 import logging
+from phyloplumber.config.environment import load_environment
 
 import pylons.test
+#if not pylons.test.pylonsapp:
+#    load_environment(conf.global_conf, conf.local_conf)
 
 from phyloplumber.config.environment import load_environment
 from phyloplumber.model.meta import Session, get_metadata

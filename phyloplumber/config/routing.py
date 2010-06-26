@@ -21,7 +21,7 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
 
+    map.resource('project', 'projects')
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
-
     return map
