@@ -17,15 +17,18 @@ fi
 ################################################################################
 if ! test -f go-pylons.py
 then
-	if ! test -x `which wget`
+	if test -z `which wget`
 	then
-		echo "The script needs go-pylons.py  Please, do one of the following:"
-		echo "    1. Install wget from  http://www.gnu.org/software/wget"
-		echo "OR"
-		echo "    2. Download the go-pylons.py script from"
-		echo "    	http://pylonshq.com/download/1.0/go-pylons.py"
-		echo "    and then place the downloaded script in this directory"
-		exit 1
+    	if test -z `which curl`
+	    then
+            echo "The script needs go-pylons.py  Please, do one of the following:"
+            echo "    1. Install wget from  http://www.gnu.org/software/wget"
+            echo "OR"
+            echo "    2. Download the go-pylons.py script from"
+            echo "    	http://pylonshq.com/download/1.0/go-pylons.py"
+            echo "    and then place the downloaded script in this directory"
+            exit 1
+        fi
 	else
 		wget http://pylonshq.com/download/1.0/go-pylons.py || exit 1
 	fi
@@ -92,7 +95,7 @@ easy_install sphinx
 # Checkout dendropy and use "setup.py develop" command to install it the dev env
 ################################################################################
 
-if ! test -d dendropy
+if  ! [[ -d dendropy || -d DendroPy ]]
 then
 	git clone git://github.com/jeetsukumaran/DendroPy.git || exit 1
 fi
