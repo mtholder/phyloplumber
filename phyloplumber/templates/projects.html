@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Phyloplumber</title>
+</head>
+<body>
+% if c.subdirs:
+Current projects:
+<ul>
+% for item in c.subdirs:
+    <li>\
+    <a href="${item[1]}">${item[0]}</a>\
+    </li>
+% endfor
+</ul>
+%else:
+<p>No current projects</p>
+%endif
+</body>
+</html>

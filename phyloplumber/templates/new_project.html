@@ -1,0 +1,46 @@
+<h1>New Project</h1>
+${h.form("create", multipart=True)}
+
+<p>Short name for the project: ${h.text(name='name', id='name')} </p>
+
+<p>Description of the project: ${h.textarea(name='description', id='description',  cols=50, rows=10)} </p>
+
+<p>
+Initial file (optional): ${h.file("file")}  <br />
+<ul>
+    <li>File format of initial file: ${h.select("format", "", [["", ""], 
+                            ["txt", "Plain Text"], 
+                            ["nexus", "NEXUS"], 
+                            [ "aaphylip", "PHYLIP AA"],
+                            [ "dnaphylip", "PHYLIP DNA"],
+                            [ "rnaphylip", "PHYLIP RNA"],
+                            [ "discretephylip", "PHYLIP Discrete"],
+                            [ "aaphylipinterleaved", "PHYLIP AA Interleaved"],
+                            [ "dnaphylipinterleaved", "PHYLIP DNA Interleaved"],
+                            [ "rnaphylipinterleaved", "PHYLIP RNA Interleaved"],
+                            [ "discretephylip", "PHYLIP Discrete Interleaved"],
+                            [ "aarelaxedphylip", "Relaxed PHYLIP AA"],
+                            [ "dnarelaxedphylip", "Relaxed PHYLIP DNA"],
+                            [ "rnarelaxedphylip", "Relaxed PHYLIP RNA"],
+                            [ "discreterelaxedphylip", "Relaxed PHYLIP Discrete "],
+                            [ "aarelaxedphylipinterleaved", "Relaxed PHYLIP AA Interleaved"],
+                            [ "dnarelaxedphylipinterleaved", "Relaxed PHYLIP DNA Interleaved"],
+                            [ "rnarelaxedphylipinterleaved", "Relaxed PHYLIP RNA Interleaved"],
+                            [ "discreterelaxedphylipinterleaved", "Relaxed PHYLIP Discrete Interleaved"],
+                            [ "aafasta", "FASTA AA"],
+                            [ "dnafasta", "FASTA DNA"],
+                            [ "rnafasta", "FASTA RNA"],
+                            [ "aaaln", "ALN-Clustal AA"],
+                            [ "dnaaln", "ALN-Clustal DNA"],
+                            [ "rnaaln", "ALN-Clustal  RNA"],
+                            ])}
+    </li>
+    <li>File compression used on initial file:
+        ${h.select("compression", "none", [["none", "None"], 
+                               ["bzip2", "bzip2"],
+                               ["gzip", "gzip"],
+                               ["zip", "zip"],
+                            ])}
+    </li>
+</ul>
+</p>

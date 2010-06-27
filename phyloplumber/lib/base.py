@@ -2,13 +2,26 @@
 
 Provides the BaseController class for subclassing.
 """
-import os
+import os, logging
+log = logging.getLogger(__name__)
 
 from pylons import config
 from pylons.controllers import WSGIController
 from pylons.templating import render_mako as render
 
 from phyloplumber.model.meta import Session
+
+class ConfigFileError(Exception):
+    def __init__(self, setting_name, msg=''):
+        self.setting_name = setting_name
+        if msg:
+            self.msg = msg
+        else:
+            self.msg = 'Invalid setting (sorry for the vague, explanation of the error -- alert the authors of phyloplumber that it is issuing an unhelpful message)'
+    def __str__(self):
+        return 'ConfigFileError: ' + self.message()
+    def message(self):
+        return 'Error in the "%(setting)s" setting of your configuration file: %(msg)s' % {'setting' : self.setting_name, 'msg' : self.msg}
 
 class BaseController(WSGIController):
 
@@ -23,10 +36,18 @@ class BaseController(WSGIController):
             Session.remove()
 
 
-_INTERNAL_DIR = os.path.abspath(os.path.expandvars(os.path.expanduser(config.get('top_internal_dir', '~/internals_phyloplumber'))))
-_EXTERNAL_DIR = os.path.abspath(os.path.expandvars(os.path.expanduser(config.get('top_external_dir', '~/phyloplumber'))))
-
-
+def get_boolean_config_var(name):
+    '''Checks for 'name' in the config file. Returns True, False, or None'''
+    v = config.get(name)
+    if v is None:
+        return v
+    vupper = v.upper()
+    if vupper in ['1', 'YES', 'Y', 'T' 'TRUE']:
+        return True
+    if vupper in ['0', 'NO', 'N', 'F' 'FALSE']:
+        return False
+    raise ConfigFileError(name, 'Should be "TRUE" or "FALSE", but found "%(v)s"' % {'v' : v})
+    
 _MISSING_SETTING_MSG = 'A %(setting)s setting is required in the initialization file used to start the server'
 
 def verify_dir(dir):
@@ -39,20 +60,56 @@ def verify_dir(dir):
 def get_top_internal_dir():
     '''Returns the absolute path to the top directory for "internal" storage.
     
-    Raises OSError if the directory does not exist and cannot be created.
+    Raises ConfigFileError if the directory does not exist and cannot be created.
     '''
+    raw = config.get('top_internal_dir')
+    if raw is None:
+        log.debug('top_internal_dir not in config')
+        log.debug('config = '+ str(config))
+        raw = '~/internals_phyloplumber'
+    _INTERNAL_DIR = os.path.abspath(os.path.expandvars(os.path.expanduser(raw)))
     if not _INTERNAL_DIR:
-        raise OSError(_MISSING_SETTING_MSG % {'setting' : 'top_internal_dir'})
-    verify_dir(_INTERNAL_DIR)
+        raise ConfigFileError('top_internal_dir', _MISSING_SETTING_MSG % {'setting' : 'top_internal_dir'})
+    try:
+        verify_dir(_INTERNAL_DIR)
+    except OSError, x:
+        raise ConfigFileError('top_internal_dir', str(x))        
     return _INTERNAL_DIR
+
+def get_internal_dir(sub):
+    parent = get_top_internal_dir()
+    full = os.path.join(parent, sub)
+    verify_dir(full)
+    return full
 
 def get_top_external_dir():
     '''Returns the absolute path to the top directory for "external" storage.
     
     Raises OSError if the directory does not exist and cannot be created.
     '''
+    raw = config.get('top_external_dir')
+    if raw is None:
+        log.debug('top_external_dir not in config')
+        log.debug('config = '+ str(config))
+        raw = '~/phyloplumber'
+    _EXTERNAL_DIR = os.path.abspath(os.path.expandvars(os.path.expanduser(raw)))
     if not _EXTERNAL_DIR:
-        raise OSError(_MISSING_SETTING_MSG % {'setting' : 'top_external_dir'})
-    verify_dir(_EXTERNAL_DIR)
+        raise ConfigFileError('top_external_dir', _MISSING_SETTING_MSG % {'setting' : 'top_external_dir'})
+    try:
+        verify_dir(_EXTERNAL_DIR)
+    except OSError, x:
+        raise ConfigFileError('top_external_dir', str(x))        
     return _EXTERNAL_DIR
+
+def get_external_dir(sub):
+    parent = get_top_external_dir()
+    full = os.path.join(parent, sub)
+    verify_dir(full)
+    return full
+
     
+def serves_projects():
+    '''Returns True if serves_projects configuration setting has a value that evaluates 
+    to true.
+    '''
+    return get_boolean_config_var('serves_projects') is not False
