@@ -2,13 +2,14 @@
 from dendropy.utility.ElementTree import _escape_attrib
 
 
-def new_index(project_name, description='')
-    if description:
-        d_str = '<meta id="a1" datatype="xsd:string" xsi:type="nex:LiteralMeta" property="phyp:projectName" content="%(n)s"/>' % {'n' : _escape_attrib(description)}
+def new_index(project_name, project_id, project_description=''):
+    if project_description:
+        d_str = '<meta id="a3" datatype="xsd:string" xsi:type="nex:LiteralMeta" property="phyp:projectDescription" content="%(n)s"/>' % {'n' : _escape_attrib(project_description)}
     else:
         d_str = ''
     n_str = '<meta id="a1" datatype="xsd:string" xsi:type="nex:LiteralMeta" property="phyp:projectName" content="%(n)s"/>' % {'n' : project_name}
-    return '\n'.join([_NEXML_HEADER, n_str, d_str, _NEXML_FOOTER])
+    i_str = '<meta id="a2" datatype="xsd:string" xsi:type="nex:LiteralMeta" property="phyp:projectId" content="%(n)s"/>' % {'n' : project_id}
+    return '\n'.join([_NEXML_HEADER, n_str, i_str, d_str, _NEXML_FOOTER])
 
 _NEXML_HEADER = '''<?xml version="1.0"?>
 <nex:nexml 
@@ -24,4 +25,4 @@ _NEXML_HEADER = '''<?xml version="1.0"?>
     xmlns="http://www.nexml.org/2009">
 '''
 
-_NEXML_FOOTER = '''</nex:nexml>'''
+_NEXML_FOOTER = '</nex:nexml>\n'''

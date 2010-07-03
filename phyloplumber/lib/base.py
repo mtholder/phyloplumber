@@ -11,7 +11,17 @@ from pylons.templating import render_mako as render
 
 from phyloplumber.model.meta import Session
 
-class ConfigFileError(Exception):
+class PhlyoplumberError(Exception):
+    pass
+
+class InvalidProjectIDError(Exception):
+    def __init__(self, project_id):
+        self.project_id = project_id
+    def __str__(self):
+        d = {'i' : self.project_id}
+        return '"%(i)s" is not a valid project id' % d
+    
+class ConfigFileError(PhlyoplumberError):
     def __init__(self, setting_name, msg=''):
         self.setting_name = setting_name
         if msg:
@@ -22,6 +32,16 @@ class ConfigFileError(Exception):
         return 'ConfigFileError: ' + self.message()
     def message(self):
         return 'Error in the "%(setting)s" setting of your configuration file: %(msg)s' % {'setting' : self.setting_name, 'msg' : self.msg}
+
+class CorruptedProjectError(PhlyoplumberError):
+    def __init__(self, project_id, msg):
+        self.project_id = project_id
+        self.msg = msg
+    def __str__(self):
+        d = {'i' : self.project_id , 'm' : self.msg }
+        return 'The project with id="%(i)s" has been corrupted:  %(m)s' % d
+    
+
 
 class BaseController(WSGIController):
 
@@ -35,6 +55,8 @@ class BaseController(WSGIController):
         finally:
             Session.remove()
 
+class ServiceController(BaseController):
+    pass
 
 def get_boolean_config_var(name):
     '''Checks for 'name' in the config file. Returns True, False, or None'''
@@ -42,9 +64,9 @@ def get_boolean_config_var(name):
     if v is None:
         return v
     vupper = v.upper()
-    if vupper in ['1', 'YES', 'Y', 'T' 'TRUE']:
+    if vupper in ['1', 'YES', 'Y', 'T', 'TRUE']:
         return True
-    if vupper in ['0', 'NO', 'N', 'F' 'FALSE']:
+    if vupper in ['0', 'NO',  'N', 'F', 'FALSE']:
         return False
     raise ConfigFileError(name, 'Should be "TRUE" or "FALSE", but found "%(v)s"' % {'v' : v})
     
@@ -55,6 +77,7 @@ def verify_dir(dir):
         if os.path.isdir(dir):
             return True
         raise OSError("File %(f)s exists, so a directory cannot be created at that location" % {f : dir})
+    log.debug("Creating directory " + dir)
     os.makedirs(dir)
 
 def get_top_internal_dir():
@@ -113,3 +136,9 @@ def serves_projects():
     to true.
     '''
     return get_boolean_config_var('serves_projects') is not False
+
+def is_debug_mode():
+    '''Returns True if debug configuration setting has a value that evaluates 
+    to true.
+    '''
+    return config.get('debug', False)

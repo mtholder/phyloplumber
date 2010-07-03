@@ -25,6 +25,14 @@ def make_map(config):
     map.resource('project', 'projects')
     map.connect('/', controller='default', action='index')
     map.connect('/projects', controller='projects', action='index')
+    map.connect('/entity/{project_id}', controller='entities', action='index')
+    map.connect('/entity/{project_id}/create', controller='entities', action='create', method='PUT')
+    map.connect('/entity/{project_id}/new', controller='entities', action='new')
+    map.connect('/entity/{project_id}/update/{id}', controller='entities', action='update', method='PUT')
+    map.connect('/entity/{project_id}/delete/{id}', controller='entities', action='delete')
+    map.connect('/entity/{project_id}/show/{id}', controller='entities', action='show')
+    map.connect('/entity/{project_id}/edit/{id}', controller='entities', action='edit')
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
     return map
+
