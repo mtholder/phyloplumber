@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<path-set xmlns="http://www.nexml.org/relative_fs/2010" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://github.com/mtholder/phyloplumber/raw/master/schema/relative_filesystem.xsd ../schema/relative_filesystem.xsd"
+ xmlns:rfsn="http://www.nexml.org/relative_fs/2010">
+ <env-path-root></env-path-root>
+</path-set>

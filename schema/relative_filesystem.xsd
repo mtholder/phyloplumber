@@ -16,6 +16,7 @@
 		<xs:attribute name="mime-type" type="xs:string" use="optional" />
 		<xs:attribute name="schema" type="xs:string" use="optional" />
 		<xs:attribute name="schema-version" type="xs:string" use="optional" />
+		<xs:attribute name="schema-url" type="xs:anyURI" use="optional" />
 		<xs:attribute name="created-by-app" type="xs:string" use="optional" />
 		<xs:attribute name="view-with-app" type="xs:string" use="optional" />
 		<xs:attribute name="edit-with-app" type="xs:string" use="optional" />
@@ -113,20 +114,20 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="path-set">
-		<xs:annotation>
-			<xs:documentation>
-				A set of path-roots
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:choice minOccurs="0" maxOccurs="unbounded">
-					<xs:element name="relative-path-root" />
-					<xs:element name="env-path-root" />
-					<xs:element name="function-path-root" />
-				</xs:choice>
-			</xs:sequence>
-		</xs:complexType>
+    <xs:complexType name="path-set-element">
+    <xs:annotation>
+        <xs:documentation>
+            A set of path-roots
+        </xs:documentation>
+    </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="relative-path-root" />
+                <xs:element name="env-path-root" />
+                <xs:element name="function-path-root" />
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+	<xs:element name="path-set" type="path-set-element">
 	</xs:element>
 </xs:schema>
