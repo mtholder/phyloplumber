@@ -1,81 +1,132 @@
 <?xml version="1.0"?>
-<xs:schema targetNamespace="http://www.nexml.org/relative_fs/2010"
-    xmlns="http://www.nexml.org/relative_fs/2010" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:complexType name="file">
-        <xs:sequence><xs:any /></xs:sequence>
-        <xs:attribute name="id" type="xs:ID" use="required"/>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="mime-type" type="xs:string" use="optional"/>
-        <xs:attribute name="created-by" type="xs:string" use="optional"/>
-        <xs:attribute name="view-with" type="xs:string" use="optional"/>
-        <xs:attribute name="edit-with" type="xs:string" use="optional"/> 
-        <xs:anyAttribute></xs:anyAttribute>
-    </xs:complexType>
-    <xs:complexType name="directory">
-        <xs:sequence>
-            <xs:element name="directory" type="directory" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="link" type="link" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="file" type="file" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:any />
-        </xs:sequence>
-        <xs:attribute name="id" type="xs:ID" use="required"/>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:anyAttribute></xs:anyAttribute>
-    </xs:complexType>
-    <xs:complexType name="link">
-        <xs:sequence><xs:any /></xs:sequence>
-        <xs:attribute name="id" type="xs:ID" use="required"/>
-        <xs:attribute name="pathid" type="xs:IDREF" use="required"/>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:anyAttribute></xs:anyAttribute>
-    </xs:complexType>
-    <xs:complexType name="path-root" abstract="true">
-        <xs:sequence>
-            <xs:element name="down" type="directory"/>
-            <xs:any />
-        </xs:sequence>
-        <xs:attribute name="id" type="xs:ID" use="required"/>
-        <xs:attribute name="tree-name" type="xs:string" use="optional"/>
-        <xs:attribute name="compressed-with" type="xs:string" use="optional"/><!-- "bzip", "zip",  ... -->
-        <xs:attribute name="decompressed-name" type="xs:string" use="optional"/><!-- If "compressed-with" is set, then this indicates the name of the directory that will be created on decompression ... -->
-        <xs:attribute name="version-control" type="xs:string" use="optional"/><!-- "git", "hg", "svn" ... -->
-        <xs:attribute name="remote-url" type="xs:string" use="optional"/><!-- URL of the central version control repository (if there is one). -->
-        <xs:anyAttribute></xs:anyAttribute>
-    </xs:complexType>
-    <xs:complexType name="relative-path-root">
-        <xs:annotation>
-            <xs:documentation>A path-root that is relative to this instance document "up" indicates
-                how many directories above the parent of the instance document</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="path-root">
-                <xs:attribute name="up" type="xs:int" use="optional" default="0"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="env-path-root">
-        <xs:annotation>
-            <xs:documentation>"up" indicates how many directories above the parent of the instance
-                document</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="path-root">
-                <xs:attribute name="env-variable" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="function-path-root">
-        <xs:annotation>
-            <xs:documentation>"up" indicates how many directories above the parent of the instance
-                document</xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="path-root">
-                <xs:sequence>
-                    <xs:element name="arg" type="xs:string"/>
-                </xs:sequence>
-                <xs:attribute name="function-name" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
+<xs:schema xmlns="http://www.nexml.org/relative_fs/2010" targetNamespace="http://www.nexml.org/relative_fs/2010"  xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:complexType name="file">
+		<xs:annotation>
+			<xs:documentation>
+				Describes a file: the name of the file, its MIME type, A string representing the name of its "schema" (which could be an XML schema or could be a name of a file format like "CSV" "schema-version" is intended to disambiguate "schema" (particularly for non-XML files in which the version info will not be in the instance doc. created-by-app, view-with-app, and edit-with-app are intended to allow for provenance of how the document was generated, and information about how to open it for the purpose of reading and editing. 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+            <xs:element name="creation-time" type="xs:dateTime" minOccurs="0" />
+            <xs:element name="modification-time" type="xs:dateTime"  minOccurs="0" />
+			<xs:any />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:ID" use="required" />
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="mime-type" type="xs:string" use="optional" />
+		<xs:attribute name="schema" type="xs:string" use="optional" />
+		<xs:attribute name="schema-version" type="xs:string" use="optional" />
+		<xs:attribute name="created-by-app" type="xs:string" use="optional" />
+		<xs:attribute name="view-with-app" type="xs:string" use="optional" />
+		<xs:attribute name="edit-with-app" type="xs:string" use="optional" />
+		<xs:anyAttribute />
+	</xs:complexType>
+	<xs:complexType name="directory">
+		<xs:annotation>
+			<xs:documentation>
+				Describes a directory. Typically this will be just a list of subdirectories, links to other files, or files contained. 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="directory" type="directory" />
+				<xs:element name="link" type="link" />
+				<xs:element name="file" type="file" />
+				<xs:element name="relative-path-root" />
+				<xs:element name="env-path-root" />
+				<xs:element name="function-path-root" />
+				<xs:any />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:ID" use="required" />
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:anyAttribute />
+	</xs:complexType>
+	<xs:complexType name="link">
+		<xs:annotation>
+			<xs:documentation>
+				Describes link to another point on the file system "pathid" is a reference to the linked filepath, while "name" is the name of the link itself. 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:any />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:ID" use="required" />
+		<xs:attribute name="path-id" type="xs:IDREF" use="required" />
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:anyAttribute />
+	</xs:complexType>
+	<xs:complexType name="path-root" abstract="true">
+		<xs:annotation>
+			<xs:documentation>
+				Describes a directory (or archive of a file or files) at some location on the filesystem that serves as the _TOP directory or _HOME for some project. The directory may be compressed. This is indicated by "compressed-with" which also indicates the compression algorithm ("bzip", "zip"...). The "decompressed-name" attribute is used for archives that do not contain a MANIFEST file of some sort; it indicates the directory name that the top of the archive will expand to. These elements can also serve as the top of a version control system ("version-control" will specify the versioning system, such as "git" or "svn"). The "remote-url" will be the remote repository URL for versioning systems that use one, but it can also be the URL from which the directory was obtained. The "down" attribute is used in all of the sub-classes to indicate where the directory is relative to those reference points
+			</xs:documentation>
+		</xs:annotation>
+		    <xs:sequence>
+                <xs:element name="down" type="directory" />
+                <xs:any />
+            </xs:sequence>
+            <xs:attribute name="nickname" type="xs:string" use="optional" />
+            <xs:attribute name="compressed-with" type="xs:string" use="optional" />
+            <xs:attribute name="decompressed-name" type="xs:string" use="optional" />
+            <xs:attribute name="version-control" type="xs:string" use="optional" />
+            <xs:attribute name="remote-url" type="xs:string" use="optional" />
+            <xs:anyAttribute />
+	</xs:complexType>
+	<xs:complexType name="relative-path-root">
+		<xs:annotation>
+			<xs:documentation>
+				A path-root that is relative to this instance document "up" indicates how many directories above the parent of the instance document 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="path-root">
+				<xs:attribute name="up" type="xs:int" use="optional" default="0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="env-path-root">
+		<xs:annotation>
+			<xs:documentation>
+				"env-variable" is the environmental variable that the parser should check to determine the location of the top of the path-root element.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="path-root">
+				<xs:attribute name="env-variable" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="function-path-root">
+		<xs:annotation>
+			<xs:documentation>
+				"function-name" is the name of a function that the parser should call to determine the location of the top of the path-root element. "arg" elements are the arguments to that function.
+				clearly use of this element may limit which parsers can find the top of the path-root.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="path-root">
+				<xs:sequence>
+					<xs:element name="arg" type="xs:string" />
+				</xs:sequence>
+				<xs:attribute name="function-name" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="path-set">
+		<xs:annotation>
+			<xs:documentation>
+				A set of path-roots
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="relative-path-root" />
+					<xs:element name="env-path-root" />
+					<xs:element name="function-path-root" />
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
