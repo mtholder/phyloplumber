@@ -55,9 +55,9 @@ if os.path.exists('dendropy'):
     string_args['dd'] = 'dendropy'
 else:
     string_args['dd'] = 'DendroPy'
-    if not os.path.exists(dendropy_dir):
+    if not os.path.exists(string_args['dd']):
         try:
-            result = subprocess.call(['git', 'clone', 'git clone git://github.com/jeetsukumaran/DendroPy.git'])
+            result = subprocess.call(['git', 'clone', 'git://github.com/jeetsukumaran/DendroPy.git'])
         except:
             sys.exit("""The attempt to pull down the latest version of dendropy using git failed.
     
@@ -113,10 +113,10 @@ cd ..
 echo "phyloplumber_env.sh has been written. Whenever you want to work on phyloplumber"
 echo "    from the command line, then (from a bash shell) source this file to "
 echo "    configure your environment"
-    ''')
+    ''' % string_args)
     o.close()
     result = subprocess.call(['/bin/sh', fn])
     if result == 0:
-        os.path.remove(fn)
+        os.remove(fn)
     else:
         sys.exit(1)
