@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<phyp:projects xmlns:nex="http://github.com/mtholder/phyloplumber/xsd/2010" xmlns:xlink="http://www.w3.org/1999/xlink">
+% if c.subdirs:
+%   for item in c.subdirs:
+        <projects id="${item[2]}" xlink:href="${item[1]}"/>
+%   endfor
+% endif
+</phyp:projects>

@@ -1,0 +1,17 @@
+<%inherit file="/base.html" />
+<%def name="title()">Phyloplumber project ${c.project.name}</%def>
+% if c.project.entity_list:
+Current projects:
+<ul>
+% for entity in c.project.entity_list:
+    <!--li>
+    <a href="${h.url(controller='entity', action='show', id=entity.id, project_id=c.project_id)}">${entity.name}</a>\
+    </li-->
+% endfor
+</ul>
+%else:
+<p>Empty project</p>
+%endif
+<p><a href="${h.url(controller="projects", action="confirm_delete")}>Create a new project</a></p>
+</body>
+</html>
