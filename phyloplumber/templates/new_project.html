@@ -48,7 +48,7 @@ Initial file (optional): ${h.file("file")}  <br />
     </li>
 </ul>
 </p>
-%if c.debug:
+%if hasattr(c, 'debug') and c.debug:
 <p> Debugging-option return format: ${h.select("format", "", [["html", "html"], ["xml", "xml"]])}</p>
 % endif
 
